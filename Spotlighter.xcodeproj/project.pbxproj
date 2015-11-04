@@ -18,33 +18,6 @@
 		9DF0EC1D07C67187001A89C1 /* README.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 9DF0EC1C07C67187001A89C1 /* README.rtf */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXBuildStyle section */
-		4A9504CCFFE6A4B311CA0CBA /* Development */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				PREBINDING = NO;
-				ZERO_LINK = YES;
-			};
-			name = Development;
-		};
-		4A9504CDFFE6A4B311CA0CBA /* Deployment */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				PREBINDING = NO;
-				ZERO_LINK = NO;
-			};
-			name = Deployment;
-		};
-/* End PBXBuildStyle section */
-
 /* Begin PBXFileReference section */
 		089C165DFE840E0CC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
@@ -167,15 +140,6 @@
 			);
 			buildRules = (
 			);
-			buildSettings = {
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = Spotlighter_Prefix.pch;
-				INFOPLIST_FILE = "Info-Spotlighter.plist";
-				INSTALL_PATH = "$(LOCAL_DEVELOPER_DIR)/Demos";
-				PRODUCT_NAME = Spotlighter;
-				WRAPPER_EXTENSION = app;
-			};
 			dependencies = (
 			);
 			name = Spotlighter;
@@ -190,15 +154,12 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = B69BDEF908A2ECB6008AC9B5 /* Build configuration list for PBXProject "Spotlighter" */;
-			buildSettings = {
-			};
-			buildStyles = (
-				4A9504CCFFE6A4B311CA0CBA /* Development */,
-				4A9504CDFFE6A4B311CA0CBA /* Deployment */,
-			);
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 29B97314FDCFA39411CA2CEA /* Spotlighter */;
 			projectDirPath = "";
+			projectRoot = "";
+			shouldCheckCompatibility = 1;
 			targets = (
 				8D1107260486CEB800E47090 /* Spotlighter */,
 			);
@@ -260,7 +221,7 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		B69BDEF608A2ECB6008AC9B5 /* Development */ = {
+		B69BDEF608A2ECB6008AC9B5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -275,11 +236,11 @@
 				PREBINDING = NO;
 				PRODUCT_NAME = Spotlighter;
 				WRAPPER_EXTENSION = app;
-				ZERO_LINK = YES;
+				ZERO_LINK = NO;
 			};
-			name = Development;
+			name = Debug;
 		};
-		B69BDEF708A2ECB6008AC9B5 /* Deployment */ = {
+		B69BDEF708A2ECB6008AC9B5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
@@ -294,7 +255,7 @@
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;
 			};
-			name = Deployment;
+			name = Release;
 		};
 		B69BDEF808A2ECB6008AC9B5 /* Default */ = {
 			isa = XCBuildConfiguration;
@@ -309,21 +270,28 @@
 			};
 			name = Default;
 		};
-		B69BDEFA08A2ECB6008AC9B5 /* Development */ = {
+		B69BDEFA08A2ECB6008AC9B5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				ZERO_LINK = NO;
 			};
-			name = Development;
+			name = Debug;
 		};
-		B69BDEFB08A2ECB6008AC9B5 /* Deployment */ = {
+		B69BDEFB08A2ECB6008AC9B5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
 			};
-			name = Deployment;
+			name = Release;
 		};
 		B69BDEFC08A2ECB6008AC9B5 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
 			};
 			name = Default;
 		};
@@ -333,8 +301,8 @@
 		B69BDEF508A2ECB6008AC9B5 /* Build configuration list for PBXNativeTarget "Spotlighter" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B69BDEF608A2ECB6008AC9B5 /* Development */,
-				B69BDEF708A2ECB6008AC9B5 /* Deployment */,
+				B69BDEF608A2ECB6008AC9B5 /* Debug */,
+				B69BDEF708A2ECB6008AC9B5 /* Release */,
 				B69BDEF808A2ECB6008AC9B5 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -343,8 +311,8 @@
 		B69BDEF908A2ECB6008AC9B5 /* Build configuration list for PBXProject "Spotlighter" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B69BDEFA08A2ECB6008AC9B5 /* Development */,
-				B69BDEFB08A2ECB6008AC9B5 /* Deployment */,
+				B69BDEFA08A2ECB6008AC9B5 /* Debug */,
+				B69BDEFB08A2ECB6008AC9B5 /* Release */,
 				B69BDEFC08A2ECB6008AC9B5 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;

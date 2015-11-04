@@ -9,22 +9,34 @@
 
 @interface AppController : NSObject
 {
-    NSMetadataQuery *_query;
-    NSString *_searchKey;
-    BOOL _searchContent;
+#ifdef OBJC_NEW_PROPERTIES
+    NSMetadataQuery *query;
+    NSString *searchKey;
+    BOOL searchContent;
+#endif
 }
 
 - (void)queryNote:(NSNotification *)note;
 
 // Through the miracle of bindings, by exposing the query in the controller, we can bind to anything in the query with expressions such as "query.results". The NSArrayController in the nib file named "AllResults" binds to the query results in this matter.
-- (NSMetadataQuery *)query;
+#ifdef OBJC_NEW_PROPERTIES
+@property(retain) NSMetadataQuery *query;
+#else
+@property(ivar) NSMetadataQuery *query;
+#endif
 
 // Expose searchKey so that the NSTextField for searching can easily be typed into and update the query as needed
-- (NSString *)searchKey;
-- (void)setSearchKey:(NSString *) value;
+#ifdef OBJC_NEW_PROPERTIES
+@property(copy) NSString *searchKey;
+#else
+@property(ivar,bycopy) NSString *searchKey;
+#endif
 
-- (BOOL)searchContent;
-- (void)setSearchContent:(BOOL)value;
+#ifdef OBJC_NEW_PROPERTIES
+@property BOOL searchContent;
+#else
+@property(ivar) BOOL searchContent;
+#endif
 
 @end
 

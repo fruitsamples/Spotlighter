@@ -90,32 +90,34 @@
 
 - (id)init {
     if (self = [super init]) {
-        _query = [[NSMetadataQuery alloc] init];
+        self.query = [[[NSMetadataQuery alloc] init] autorelease];
+        self.searchKey = @"";
         
         // To watch results send by the query, add an observer to the NSNotificationCenter
         NSNotificationCenter *nf = [NSNotificationCenter defaultCenter];
-        [nf addObserver:self selector:@selector(queryNote:) name:nil object:_query];
+        [nf addObserver:self selector:@selector(queryNote:) name:nil object:self.query];
         
         // We want the items in the query to automatically be sorted by the file system name; this way, we don't have to do any special sorting
-        [_query setSortDescriptors:[NSArray arrayWithObject:[[[NSSortDescriptor alloc] initWithKey:(id)kMDItemFSName ascending:YES] autorelease]]];
+        [self.query setSortDescriptors:[NSArray arrayWithObject:[[[NSSortDescriptor alloc] initWithKey:(id)kMDItemFSName ascending:YES] autorelease]]];
         // For the groups, we want the first grouping by the kind, and the second by the file size. 
-        [_query setGroupingAttributes:[NSArray arrayWithObjects:(id)kMDItemKind, (id)kMDItemFSSize, nil]];
+        [self.query setGroupingAttributes:[NSArray arrayWithObjects:(id)kMDItemKind, (id)kMDItemFSSize, nil]];
         
-        [_query setDelegate:self];
+        [self.query setDelegate:self];
         
     }
     return self;
 }
 
-- (void) dealloc {
+- (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+#ifdef OBJC_NEW_PROPERTIES
+    [query release];
+    [searchKey release];
+#else
     [_query release];
     [_searchKey release];
+#endif
     [super dealloc];
-}
-
-- (NSMetadataQuery *)query {
-    return _query;
 }
 
 - (void)queryNote:(NSNotification *)note {
@@ -139,26 +141,26 @@
 // metadataQuery:replacementValueForAttribute:value allows the resulting value retrieved from an NSMetadataItem to be changed. When items are grouped, we want to allow all items of a similar size to be grouped together. This allows this to happen.
 - (id)metadataQuery:(NSMetadataQuery *)query replacementValueForAttribute:(NSString *)attrName value:(id)attrValue {
     if ([attrName isEqualToString:(id)kMDItemFSSize]) {
-        int fsSize = [attrValue intValue];
+        NSInteger fsSize = [attrValue integerValue];
         // Here is a special case for small files
         if (fsSize == 0) {
             return NSLocalizedString(@"0 Byte Files", @"File size, for empty files and directories");
         }
-        const int cutOff = 1024;
+        const NSInteger cutOff = 1024;
         
         if (fsSize < cutOff) {
             return NSLocalizedString(@"< 1 KB Files", @"File size, for items that are less than 1 kilobyte");
         }
         
         // Figure out how many kb, mb, etc, that we have
-        int numK = fsSize / 1024;
+        NSInteger numK = fsSize / 1024;
         if (numK < cutOff) {
-            return [NSString stringWithFormat:NSLocalizedString(@"%d KB Files", @"File size, expressed in kilobytes"), numK];
+            return [NSString stringWithFormat:NSLocalizedString(@"%ld KB Files", @"File size, expressed in kilobytes"), (long)numK];
         }
         
-        int numMB = numK / 1024;
+        NSInteger numMB = numK / 1024;
         if (numMB < cutOff) {
-            return [NSString stringWithFormat:NSLocalizedString(@"%d MB Files", @"File size, expressed in megabytes"), numMB];
+            return [NSString stringWithFormat:NSLocalizedString(@"%ld MB Files", @"File size, expressed in megabytes"), (long)numMB];
         }
         
         return NSLocalizedString(@"Huge files", @"File size, for really large files");
@@ -180,23 +182,23 @@
     
     // The user can set the checkbox to include this in the search result, or not.
     NSPredicate *predicateToRun = nil;
-    if (_searchContent) {
+    if (self.searchContent) {
         // In the example below, we create a predicate with a given format string that simply replaces %@ with the string that is to be searched for. By using "like", the query will end up doing a regular expression search similar to *foo* when you are searching for the word "foo". By using the [c], the NSCaseInsensitivePredicateOption will be set in the created predicate. The particular item type to search for, kMDItemTextContent, is described in MDItem.h.
         NSString *predicateFormat = @"kMDItemTextContent like[c] %@";
-        predicateToRun = [NSPredicate predicateWithFormat:predicateFormat, _searchKey];
+        predicateToRun = [NSPredicate predicateWithFormat:predicateFormat, self.searchKey];
     }
     
     // Create a compound predicate that searches for any keypath which has a value like the search key. This broadens the search results to include things such as the author, title, and other attributes not including the content. This is done in code for two reasons: 1. The predicate parser does not yet support "* = Foo" type of parsing, and 2. It is an example of creating a predicate in code, which is much "safer" than using a search string.
     unsigned options = (NSCaseInsensitivePredicateOption|NSDiacriticInsensitivePredicateOption);
     NSPredicate *compPred = [NSComparisonPredicate
                 predicateWithLeftExpression:[NSExpression expressionForKeyPath:@"*"]
-                            rightExpression:[NSExpression expressionForConstantValue:_searchKey]
+                            rightExpression:[NSExpression expressionForConstantValue:self.searchKey]
                                    modifier:NSDirectPredicateModifier
                                        type:NSLikePredicateOperatorType
                                     options:options];
     
     // Combine the two predicates with an OR, if we are including the content as searchable
-    if (_searchContent) {
+    if (self.searchContent) {
         predicateToRun = [NSCompoundPredicate orPredicateWithSubpredicates:[NSArray arrayWithObjects:compPred, predicateToRun, nil]];
     } else {
         // Since we aren't searching the content, just use the other predicate
@@ -208,27 +210,41 @@
     predicateToRun = [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:predicateToRun, emailExclusionPredicate, nil]];
     
     // Set it to the query. If the query already is alive, it will update immediately
-    [_query setPredicate:predicateToRun];           
+    [self.query setPredicate:predicateToRun];           
     
     // In case the query hasn't yet started, start it.
-    [_query startQuery]; 
+    [self.query startQuery]; 
 }
 
-- (BOOL)searchContent {
-    return _searchContent;
-}
+#ifdef OBJC_NEW_PROPERTIES
+@synthesize query;
 
+@synthesize searchContent;
+- (void)setSearchContent:(BOOL)value {
+    if (searchContent != value) {
+        searchContent = value;
+        [self createSearchPredicate];
+    }
+}
+#else
 - (void)setSearchContent:(BOOL)value {
     if (_searchContent != value) {
         _searchContent = value;
         [self createSearchPredicate];
     }
 }
+#endif
 
-- (NSString *)searchKey {
-    return [[_searchKey copy] autorelease];
+#ifdef OBJC_NEW_PROPERTIES
+@synthesize searchKey;
+- (void)setSearchKey:(NSString *) value {
+    if (searchKey != value) {
+        [searchKey release];
+        searchKey = [value copy];
+        [self createSearchPredicate];
+    }
 }
-
+#else
 - (void)setSearchKey:(NSString *) value {
     if (_searchKey != value) {
         [_searchKey release];
@@ -236,6 +252,7 @@
         [self createSearchPredicate];
     }
 }
+#endif
 
 // Connected via bindings, not target/action
 - (void)tableViewDoubleClick:(id)path {

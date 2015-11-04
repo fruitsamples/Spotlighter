@@ -55,10 +55,10 @@
     if (value == nil) {
         return nil;
     }
-    if (![value respondsToSelector:@selector(intValue)]) {
-        [NSException raise:NSInternalInconsistencyException format:@"Value %@ does not respond to intValue", [value class]];
+    if (![value respondsToSelector:@selector(integerValue)]) {
+        [NSException raise:NSInternalInconsistencyException format:@"Value %@ does not respond to integerValue", [value class]];
     }
-    int val = [value intValue];
+    NSInteger val = [value integerValue];
     if (val) {
         return NSLocalizedString(@"Query is alive...", @"String to be shown when the query is alive and maintaining results");
     } else {
@@ -78,19 +78,19 @@
     if (value == nil) {
         return NSLocalizedString(@"0 Bytes", @"File size shown for 0 byte files");
     }
-    if (![value respondsToSelector:@selector(intValue)]) {
-        [NSException raise:NSInternalInconsistencyException format:@"Value %@ does not respond to intValue", [value class]];
+    if (![value respondsToSelector:@selector(integerValue)]) {
+        [NSException raise:NSInternalInconsistencyException format:@"Value %@ does not respond to integerValue", [value class]];
     }
-    int fsSize = [value intValue];
+    NSInteger fsSize = [value integerValue];
     // special case for small files
     if (fsSize == 0) {
         return NSLocalizedString(@"0 Bytes", @"File size shown for 0 byte files");
     }
     
-    const int cutOff = 900;
+    const NSInteger cutOff = 900;
     
     if (fsSize < cutOff) {
-        return [NSString stringWithFormat:NSLocalizedString(@"%d Bytes", @"File size shown formatted as bytes"), fsSize];
+        return [NSString stringWithFormat:NSLocalizedString(@"%ld Bytes", @"File size shown formatted as bytes"), (long)fsSize];
     }
     
     double numK = (double)fsSize / 1024;
